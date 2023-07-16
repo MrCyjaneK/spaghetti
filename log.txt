@@ -1,0 +1,13 @@
+@nix { "action": "setPhase", "phase": "unpackPhase" }
+unpacking sources
+unpacking source archive /nix/store/hy7lcawp2zyb02p6q2kp5l9hmpqqw0fl-spaghetti
+source root is spaghetti
+@nix { "action": "setPhase", "phase": "patchPhase" }
+patching sources
+@nix { "action": "setPhase", "phase": "updateAutotoolsGnuConfigScriptsPhase" }
+updateAutotoolsGnuConfigScriptsPhase
+@nix { "action": "setPhase", "phase": "configurePhase" }
+configuring
+@nix { "action": "setPhase", "phase": "installPhase" }
+installing
+cp: cannot stat 'pubspec.yaml': No such file or directory
