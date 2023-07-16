@@ -3,6 +3,9 @@ description: Simple file bin service
 version: 0.0.0
 # repository: https://github.com/my_org/my_repo
 
+executables:
+  spaghettiserver: bin/server.dart
+
 environment:
   sdk: ^3.0.5
 
