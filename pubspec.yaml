@@ -4,7 +4,7 @@ version: 0.0.0
 # repository: https://github.com/my_org/my_repo
 
 executables:
-  spaghettiserver: bin/server.dart
+  spaghettiserver: server
 
 environment:
   sdk: ^3.0.5
