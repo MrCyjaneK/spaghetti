@@ -11,7 +11,8 @@ late final String fileStore;
 late final Box<FileStore> fileStoreBox;
 late final String datapath;
 
-Future<void> start(String newDatapath) async {
+Future<void> start(String newDatapath, String listenip, int listenport,
+    int expiresoft, int expirehard) async {
   datapath = newDatapath;
   Hive.init(p.join(datapath, "objectbox"));
   Hive.registerAdapter(FileStoreAdapter());
@@ -19,20 +20,20 @@ Future<void> start(String newDatapath) async {
   var app = Router();
 
   app.post('/', uploadHandler);
-  app.get("/", rootHandler);
+  app.get('/', rootHandler);
   app.get('/<sid>', downloadHandler);
 
-  var server = await io.serve(app, '0.0.0.0', 8080);
-  cleanup();
+  var server = await io.serve(app, listenip, listenport);
+  cleanup(expiresoft, expirehard);
   print("app started: ${server.address}:${server.port}");
 }
 
-Future<void> cleanup() async {
+Future<void> cleanup(int expiresoft, int expirehard) async {
   for (var fsi in fileStoreBox.values) {
     if (DateTime.now().difference(fsi.accessDate).inSeconds >
-            Duration(hours: 24 * 15).inSeconds ||
+            Duration(hours: 24 * expiresoft).inSeconds ||
         DateTime.now().difference(fsi.createdData).inSeconds >
-            Duration(hours: 24 * 32).inSeconds) {
+            Duration(hours: 24 * expirehard).inSeconds) {
       final f = File(
         p.join(datapath, "files", FileStore.idToString(fsi.id)),
       );
@@ -45,5 +46,5 @@ Future<void> cleanup() async {
   }
 
   await Future.delayed(Duration(minutes: 37));
-  cleanup();
+  cleanup(expiresoft, expirehard);
 }

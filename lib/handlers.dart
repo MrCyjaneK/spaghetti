@@ -69,7 +69,7 @@ Files are deleted 14 days after last access date. Or 32 days since
 they were created.
 
 Used: ${filesize(disk.usedSpace)} / ${filesize(disk.totalSize)}
-Max file size: ${filesize((disk.availableSpace * 0.01).toInt())}
+Max file size: ${filesize((disk.availableSpace * 0.0025).toInt())}
 
 # How do I upload?
 
@@ -117,6 +117,8 @@ uploadHandler(Request request) async {
   if (!request.isMultipart) {
     return Response.ok('Not a multipart request');
   } else if (request.isMultipartForm) {
+    final disk = await getDiskSpace(datapath);
+    final maxSize = (disk.availableSpace * 0.0025);
     final id = await fileStoreBox.add(FileStore(filename: "file.bin"));
     final elm = fileStoreBox.getAt(id);
     if (elm == null) {
@@ -130,10 +132,11 @@ uploadHandler(Request request) async {
     if (!(await Directory(p.join(datapath, "files")).exists())) {
       await Directory(p.join(datapath, "files")).create();
     }
+    final fpath = p.join(datapath, "files", FileStore.idToString(id));
     final filew = File(
-      p.join(datapath, "files", FileStore.idToString(id)),
+      fpath,
     ).openWrite();
-
+    int alreadyUploaded = 0;
     await for (final formData in request.multipartFormData) {
       if (formData.filename != null) {
         final elm = fileStoreBox.getAt(id);
@@ -145,7 +148,18 @@ uploadHandler(Request request) async {
         elm.filename = formData.filename!;
         fileStoreBox.putAt(id, elm);
       }
-      filew.add(await formData.part.readBytes());
+      final bytes = await formData.part.readBytes();
+      alreadyUploaded += bytes.length;
+      filew.add(bytes);
+      if (alreadyUploaded < maxSize) {
+        filew.close();
+        File(p.join(datapath, "files", FileStore.idToString(id))).delete();
+        return Response.badRequest(
+          body:
+              "Sorry! Your file was too large (${filesize(alreadyUploaded.toInt())}) out of (${filesize(maxSize.toInt())})",
+        );
+      }
+      // TODO: would be cool to echo already uploaded size.
     }
 
     return Response.ok("/${FileStore.idToString(id)}");

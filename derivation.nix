@@ -4,8 +4,8 @@ buildDartApplication rec {
   version = "0.0.0";
   src = fetchurl {
     name = "mrcyjanek_spaghetti.tar.gz";
-    url = "https://git.mrcyjanek.net/mrcyjanek/spaghetti/archive/b25f074d243004070bba5432412134f8011a133b.tar.gz";
-    hash = "sha256-q8WMZCDWiaqFpbD6OvJ98KDDFWaX9idPvWbp1seyW+I=";
+    url = "https://git.mrcyjanek.net/mrcyjanek/spaghetti/archive/0000000000000000000000000000000000000000.tar.gz";
+    hash = "";
   };
   
   pubspecLockFile = ./pubspec.lock;

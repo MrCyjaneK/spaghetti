@@ -1,4 +1,4 @@
 data_dir/
-build/# https://dart.dev/guides/libraries/private-files
+build/
 # Created by `dart pub`
 .dart_tool/
