@@ -1,2 +1,4 @@
 { pkgs ? import <nixpkgs> {} }:
-pkgs.callPackage ./derivation.nix {}
+{
+  spaghettiserver = pkgs.callPackage ./derivation.nix {}
+}
